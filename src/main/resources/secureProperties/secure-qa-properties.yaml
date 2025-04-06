@@ -1,0 +1,3 @@
+#Prod secure properties
+db:
+    password: "![]"

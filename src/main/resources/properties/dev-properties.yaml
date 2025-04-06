@@ -1,0 +1,32 @@
+http: 
+  port: "8081"
+https:
+  port: "8081"
+
+#MySql DB
+db:
+  host: "localhost"
+  port: "3306"
+  username: "root"  
+
+#Anypoint MQ
+mq:
+  url: "https://mq-us-east-1.anypoint.mulesoft.com/api/v1/organizations/b37ca894-a7ef-4fca-b617-1aacb23f02ea/environments/a826997b-abec-4bbf-ab26-ec64e56f4420"
+  clientId: "c1bac42a1b684c30b3952f87f2b98eab"
+  destination: "DeadLetterQueue"
+
+#TLS configuration
+keystore:
+  type: "JKS"
+  path: "keystore/keystore.jks"
+  alias: "mule"
+  keypassword: "keystore"
+  password: "keystore"
+  
+#Auto-Discovery 
+apiKey: "20283944"
+
+#Error Handling  
+ErrorMessage: "Please contact MuleSoft admin for further investigation"
+
+

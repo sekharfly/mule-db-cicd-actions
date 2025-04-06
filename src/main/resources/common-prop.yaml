@@ -1,0 +1,3 @@
+app:
+  name: "accounts-db-sapi"
+  version: "v1"

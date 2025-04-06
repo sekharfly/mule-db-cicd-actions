@@ -1,0 +1,7 @@
+#Dev secure properties
+db:
+    password: "![d7NVzupCEgq3DxVO8gatFA==]"
+
+
+mq:
+  clientSecret: "![KxdoERVM33eoNw5s8EsmBmAZJ2KndvOXVbzJdwbQa0QKOE9WtudjViSux6/YLpqj]"

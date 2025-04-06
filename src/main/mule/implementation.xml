@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:x12="http://www.mulesoft.org/schema/mule/x12" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/x12 http://www.mulesoft.org/schema/mule/x12/current/mule-x12.xsd">
+	<flow name="implementationFlow" doc:id="6c42afa6-e17e-42a7-9a22-9a7d095197fb" >
+		<logger level="INFO" doc:name="Logger" doc:id="d5b3088b-4833-4aee-8250-19c27a45fb44" message="Start"/>
+		<ee:transform doc:name="Transform Message" doc:id="802ad651-6665-4e9b-9980-8b373a409a79" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<batch:job jobName="implementationBatch_Job" doc:id="cade9655-74f9-4c59-b891-da970303a0f6" maxFailedRecords="-1">
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="f1166e96-9924-4949-a17f-8424a90776bf" >
+					<ee:transform doc:name="Transform Message" doc:id="e1ec3380-b84a-4be6-bad8-b0829beac2ba" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+						</ee:message>
+						<ee:variables >
+							<ee:set-variable variableName="originalRequest" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="e761c9d9-e3a4-4085-8933-48751adf4b8d" size="100" preserveMimeTypes="true">
+						<until-successful maxRetries="3" doc:name="Until Successful" doc:id="97282a0c-c1da-421e-a307-52b2fba8c941" millisBetweenRetries="1000">
+							<db:bulk-insert doc:name="Bulk insert" doc:id="58710ee4-6c67-4a7f-b688-144188a890c8" config-ref="Database_Config">
+							<db:sql><![CDATA[INSERT INTO accountObject (id, fax, Name, email, accountNumber, country, city, street, postalCode) values (:id, :fax, :Name:, :email, :accountNumber, :country:, :city, :street, :postalCode);]]></db:sql>
+						</db:bulk-insert>
+						</until-successful>
+					</batch:aggregator>
+				</batch:step>
+				<batch:step name="Batch_Step1" doc:id="7c00e8f8-227e-4428-908f-8d321b484adf" acceptPolicy="ONLY_FAILURES">
+					<ee:transform doc:name="Transform Message" doc:id="cd910b5e-ad71-4713-99cd-abe83bcaa041" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.originalRequest]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="42580a5f-77db-4321-9151-2cda762c52fc" message="--------------------------orginal #[payload]"/>
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="cfedc87c-614d-44f1-b744-cb6daca054a6" size="100" preserveMimeTypes="true">
+						<ee:transform doc:name="Transform Message" doc:id="98f34ca1-442c-4646-a12e-dbad5c12461e" >
+							<ee:message >
+								<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+					</batch:aggregator>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<ee:transform doc:name="Transform Message" doc:id="123d9fd1-9087-487c-8559-dfea75b10998" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+Message: "successful"]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</batch:on-complete>
+		</batch:job>
+		<logger level="INFO" doc:name="Logger" doc:id="b8afb542-27dc-4f25-936a-000d9d35daee" message="End"/>
+	</flow>
+</mule>

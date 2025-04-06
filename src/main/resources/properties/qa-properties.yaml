@@ -1,0 +1,6 @@
+#QA properties
+db:
+  host:
+  port:
+  username:
+  service:

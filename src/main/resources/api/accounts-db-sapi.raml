@@ -1,0 +1,23 @@
+#%RAML 1.0
+title: accounts-db-sapi
+version: v1
+protocols: [HTTP, HTTPS]
+mediaType: application/json
+baseUri: http://localhost:8081/api/v1/
+
+uses:
+  commonLibrary: exchange_modules/b37ca894-a7ef-4fca-b617-1aacb23f02ea/sfcc-common-library/1.0.1/sfcc-common-library.raml
+  
+/bulkInsert:
+  post:
+    is: [commonLibrary.client-credentials-required, commonLibrary.correlationId, commonLibrary.standard-error-responses]
+    description: bulk insert into DB
+    body:
+      application/json:
+        type: !include datatypes/requests/bulkinsert.raml
+        example: !include examples/requests/bulkinsert.json
+    responses:
+      201:
+        body:
+          application/json:
+           

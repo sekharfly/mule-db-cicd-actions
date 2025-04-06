@@ -1,0 +1,6 @@
+#Prod properties
+db:
+  host:
+  port:
+  username:
+  service:

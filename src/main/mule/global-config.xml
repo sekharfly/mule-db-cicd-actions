@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<global-property doc:name="Global Property" doc:id="e1da9ad5-1cec-426a-ba0e-74cc44c7112c" name="mule.env" value="dev" />
+	<configuration-properties doc:name="Configuration properties" doc:id="31574bca-b552-4f44-b042-b0330361d73c" file="properties/${mule.env}-properties.yaml" />
+	<configuration doc:name="Configuration" doc:id="7e285fb4-71a8-45e8-9adb-6820e6bf296b" defaultErrorHandler-ref="apikit-errors" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="0d7bc7ee-65a1-4bdd-96d9-ae832c6f10c6" file="secureProperties/secure-${mule.env}-properties.yaml" key="${encryption.key}" />
+	<global-property doc:name="Global Property" doc:id="6a10599b-051f-436f-bd9e-f243dcda4416" name="encryption.key" value="Mulesoft@1234567" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="66f138bf-f145-4471-8b1b-65a706a33a64" >
+		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.username}" password="${secure::db.password}" database="salesforceass"/>
+	</db:config>
+	<http:listener-config name="accounts-db-sapi-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS">
+			<tls:context >
+				<tls:trust-store insecure="true" />
+				<tls:key-store type="jks" path="${keystore.path}" alias="${keystore.alias}" keyPassword="${keystore.keypassword}" password="${keystore.password}" />
+			</tls:context>
+		</http:listener-connection>
+    </http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="d33013ef-d372-4e6e-a53d-f6c8c8805f93" file="common-prop.yaml" />
+	<api-gateway:autodiscovery apiId="${apiKey}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="27734094-44fc-4a95-bdd0-0f2016470b58" flowRef="accounts-db-sapi-main" />
+</mule>
