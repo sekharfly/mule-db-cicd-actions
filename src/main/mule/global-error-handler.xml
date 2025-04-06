@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/min-log http://www.mulesoft.org/schema/mule/min-log/current/mule-min-log.xsd
 http://www.mulesoft.org/schema/mule/eframework2 http://www.mulesoft.org/schema/mule/eframework2/current/mule-eframework2.xsd">
 
-<!-- 	<configuration defaultErrorHandler-ref="apikit-errors" />
+<!-- 	<configuration default ErrorHandler-ref="apikit-errors" />
  -->
 	<error-handler name="apikit-errors">	
 		
